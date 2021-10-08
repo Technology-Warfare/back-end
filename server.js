@@ -131,8 +131,6 @@ app.post('/vehiculos/nuevo', (req, res) => {
   console.log('llaves: ', Object.keys(datosVehiculo));
   try {
     if (
-      Object.keys(datosVehiculo).includes('idVehiculo') &&
-      Object.keys(datosVehiculo).includes('tipo') &&
       Object.keys(datosVehiculo).includes('marca') &&
       Object.keys(datosVehiculo).includes('modelo') &&
       Object.keys(datosVehiculo).includes('generacion') &&
