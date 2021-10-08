@@ -137,7 +137,10 @@ app.post('/vehiculos/nuevo', (req, res) => {
       Object.keys(datosVehiculo).includes('modelo') &&
       Object.keys(datosVehiculo).includes('generacion') &&
       Object.keys(datosVehiculo).includes('serie') && 
-      Object.keys(datosVehiculo).includes('modificacion') 
+      Object.keys(datosVehiculo).includes('modificacion') &&
+      Object.keys(datosVehiculo).includes('equipamiento') &&
+      Object.keys(datosVehiculo).includes('descripcion') &&
+      Object.keys(datosVehiculo).includes('observaciones') 
       ) {
         // implementar código para crear vehículo en la BD
         baseDeDatos.collection('vehiculo').insertOne(datosVehiculo, (err, result) => {
