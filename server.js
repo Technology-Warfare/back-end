@@ -20,33 +20,38 @@ const app = Express();
 app.use(Express.json());
 app.use(Cors());
 
-app.get('/vehiculos', (req, res) => {
-  console.log('alguien hizo get en la ruta /vehiculos');
+
+//crud usuarios
+app.get('/usuarios', (req, res) => {
+  console.log('alguien hizo get en la ruta /usuarios');
   baseDeDatos
-    .collection('vehiculo')
+    .collection('usuario')
     .find()
     .limit(50)
     .toArray((err, result) => {
       if (err) {
-        res.status(500).send('Error consultando los vehiculos');
+        res.status(500).send('Error consultando los usuarios');
       } else {
         res.json(result);
       }
     });
 });
 
-app.post('/vehiculos/nuevo', (req, res) => {
+app.post('/usuarios/nuevo', (req, res) => {
   console.log(req);
-  const datosVehiculo = req.body;
-  console.log('llaves: ', Object.keys(datosVehiculo));
+  const datosUsuario = req.body;
+  console.log('llaves: ', Object.keys(datosUsuario));
   try {
     if (
-      Object.keys(datosVehiculo).includes('name') &&
-      Object.keys(datosVehiculo).includes('brand') &&
-      Object.keys(datosVehiculo).includes('model')
+      Object.keys(datosUsuario).includes('nombre') &&
+      Object.keys(datosUsuario).includes('apellido') &&
+      Object.keys(datosUsuario).includes('edad') &&
+      Object.keys(datosUsuario).includes('email') &&
+      Object.keys(datosUsuario).includes('documento') &&
+      Object.keys(datosUsuario).includes('numerodocumento') 
     ) {
       // implementar código para crear vehículo en la BD
-      baseDeDatos.collection('vehiculo').insertOne(datosVehiculo, (err, result) => {
+      baseDeDatos.collection('usuario').insertOne(datosUsuario, (err, result) => {
         if (err) {
           console.error(err);
           res.sendStatus(500);
@@ -63,23 +68,23 @@ app.post('/vehiculos/nuevo', (req, res) => {
   }
 });
 
-app.patch('/vehiculos/editar', (req, res) => {
+app.patch('/usuarios/editar', (req, res) => {
   const edicion = req.body;
   console.log(edicion);
-  const filtroVehiculo = { _id: new ObjectId(edicion.id) };
+  const filtroUsuario = { _id: new ObjectId(edicion.id) };
   delete edicion.id;
   const operacion = {
     $set: edicion,
   };
   baseDeDatos
-    .collection('vehiculo')
+    .collection('usuario')
     .findOneAndUpdate(
-      filtroVehiculo,
+      filtroUsuario,
       operacion,
       { upsert: true, returnOriginal: true },
       (err, result) => {
         if (err) {
-          console.error('error actualizando el vehiculo: ', err);
+          console.error('error actualizando el usuario: ', err);
           res.sendStatus(500);
         } else {
           console.log('actualizado con exito');
@@ -89,9 +94,9 @@ app.patch('/vehiculos/editar', (req, res) => {
     );
 });
 
-app.delete('/vehiculos/eliminar', (req, res) => {
-  const filtroVehiculo = { _id: new ObjectId(req.body.id) };
-  baseDeDatos.collection('vehiculo').deleteOne(filtroVehiculo, (err, result) => {
+app.delete('/usaurios/eliminar', (req, res) => {
+  const filtroUsuario = { _id: new ObjectId(req.body.id) };
+  baseDeDatos.collection('usuario').deleteOne(filtroUsuario, (err, result) => {
     if (err) {
       console.error(err);
       res.sendStatus(500);
@@ -107,7 +112,7 @@ const main = () => {
       console.error('Error conectando a la base de datos');
       return 'error';
     }
-    baseDeDatos = db.db('concesionario');
+    baseDeDatos = db.db('tesla');
     console.log('baseDeDatos exitosa');
     return app.listen(5000, () => {
       console.log('escuchando puerto 5000');
