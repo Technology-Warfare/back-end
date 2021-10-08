@@ -196,6 +196,103 @@ app.delete('/vehiculos/eliminar', (req, res) => {
   });
 });
 
+
+
+//*******************-----------------******************
+//crud ventas
+app.get('/ventas', (req, res) => {
+  console.log('alguien hizo get en la ruta /ventas');
+  baseDeDatos
+    .collection('venta')
+    .find()
+    .limit(50)
+    .toArray((err, result) => {
+      if (err) {
+        res.status(500).send('Error consultando las ventas');
+      } else {
+        res.json(result);
+      }
+    });
+});
+
+app.post('/ventas/nuevo', (req, res) => {
+  console.log(req);
+  const datosVenta = req.body;
+  console.log('llaves: ', Object.keys(datosVenta));
+  try {
+    if (
+      Object.keys(datosVenta).includes('idVenta') &&
+      Object.keys(datosVenta).includes('idAuto') &&
+      Object.keys(datosVenta).includes('firstName') &&
+      Object.keys(datosVenta).includes('lastName') && 
+      Object.keys(datosVenta).includes('email') &&
+      Object.keys(datosVenta).includes('celular') &&
+      Object.keys(datosVenta).includes('fNVendedor') &&
+      Object.keys(datosVenta).includes('lNVendedor') && 
+      Object.keys(datosVenta).includes('emailVendedor') &&
+      Object.keys(datosVenta).includes('celularVendedor') && 
+      Object.keys(datosVenta).includes('precio') &&
+      Object.keys(datosVenta).includes('estado') && 
+      Object.keys(datosVenta).includes('cantidad') &&
+      Object.keys(datosVenta).includes('descripcion') &&
+      Object.keys(datosVenta).includes('observacion')  
+      ) {
+        // implementar código para crear vehículo en la BD
+        baseDeDatos.collection('venta').insertOne(datosVenta, (err, result) => {
+          if (err) {
+            console.error(err);
+            res.sendStatus(500);
+          } else {
+            console.log(result);
+            res.sendStatus(200);
+          }
+        });
+      } else {
+        res.sendStatus(500);
+      }
+    } catch {
+      res.sendStatus(500);
+    }
+  });
+
+app.patch('/ventas/editar', (req, res) => {
+  const regVenta = req.body;
+  console.log(regVenta);
+  const filtroVenta = { _id: new ObjectId(regVenta.id) };
+  delete regVenta.id;
+  const operacion = {
+    $set: regVenta,
+  };
+  baseDeDatos
+    .collection('venta')
+    .findOneAndUpdate(
+      filtroVenta,
+      operacion,
+      { upsert: true, returnOriginal: true },
+      (err, result) => {
+        if (err) {
+          console.error('error actualizando la venta: ', err);
+          res.sendStatus(500);
+        } else {
+          console.log('actualizado con exito');
+          res.sendStatus(200);
+        }
+      }
+    );
+});
+
+app.delete('/ventas/eliminar', (req, res) => {
+  const filtroVenta = { _id: new ObjectId(req.body.id) };
+  baseDeDatos.collection('venta').deleteOne(filtroVenta, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 const main = () => {
   client.connect((err, db) => {
     if (err) {
