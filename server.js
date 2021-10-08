@@ -106,6 +106,95 @@ app.delete('/usaurios/eliminar', (req, res) => {
   });
 });
 
+
+
+//*******************-----------------******************
+//crud vehiculos
+app.get('/vehiculos', (req, res) => {
+  console.log('alguien hizo get en la ruta /vehiculos');
+  baseDeDatos
+    .collection('vehiculo')
+    .find()
+    .limit(50)
+    .toArray((err, result) => {
+      if (err) {
+        res.status(500).send('Error consultando los usuarios');
+      } else {
+        res.json(result);
+      }
+    });
+});
+
+app.post('/vehiculos/nuevo', (req, res) => {
+  console.log(req);
+  const datosVehiculo = req.body;
+  console.log('llaves: ', Object.keys(datosVehiculo));
+  try {
+    if (
+      Object.keys(datosVehiculo).includes('idVehiculo') &&
+      Object.keys(datosVehiculo).includes('tipo') &&
+      Object.keys(datosVehiculo).includes('marca') &&
+      Object.keys(datosVehiculo).includes('modelo') &&
+      Object.keys(datosVehiculo).includes('generacion') &&
+      Object.keys(datosVehiculo).includes('serie') && 
+      Object.keys(datosVehiculo).includes('modificacion') 
+      ) {
+        // implementar código para crear vehículo en la BD
+        baseDeDatos.collection('vehiculo').insertOne(datosVehiculo, (err, result) => {
+          if (err) {
+            console.error(err);
+            res.sendStatus(500);
+          } else {
+            console.log(result);
+            res.sendStatus(200);
+          }
+        });
+      } else {
+        res.sendStatus(500);
+      }
+    } catch {
+      res.sendStatus(500);
+    }
+  });
+
+app.patch('/vehiculos/editar', (req, res) => {
+  const regVehiculo = req.body;
+  console.log(regVehiculo);
+  const filtroVehiculo = { _id: new ObjectId(regVehiculo.id) };
+  delete regVehiculo.id;
+  const operacion = {
+    $set: regVehiculo,
+  };
+  baseDeDatos
+    .collection('vehiculo')
+    .findOneAndUpdate(
+      filtroVehiculo,
+      operacion,
+      { upsert: true, returnOriginal: true },
+      (err, result) => {
+        if (err) {
+          console.error('error actualizando el vehiculo: ', err);
+          res.sendStatus(500);
+        } else {
+          console.log('actualizado con exito');
+          res.sendStatus(200);
+        }
+      }
+    );
+});
+
+app.delete('/vehiculos/eliminar', (req, res) => {
+  const filtroVehiculo = { _id: new ObjectId(req.body.id) };
+  baseDeDatos.collection('vehiculo').deleteOne(filtroVehiculo, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 const main = () => {
   client.connect((err, db) => {
     if (err) {
