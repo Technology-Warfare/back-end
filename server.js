@@ -48,7 +48,8 @@ app.post('/usuarios/nuevo', (req, res) => {
       Object.keys(datosUsuario).includes('edad') &&
       Object.keys(datosUsuario).includes('email') &&
       Object.keys(datosUsuario).includes('documento') &&
-      Object.keys(datosUsuario).includes('numerodocumento') 
+      Object.keys(datosUsuario).includes('numerodocumento') &&
+      Object.keys(datosUsuario).includes('cargo') 
     ) {
       // implementar código para crear vehículo en la BD
       baseDeDatos.collection('usuario').insertOne(datosUsuario, (err, result) => {
