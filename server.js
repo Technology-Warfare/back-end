@@ -94,7 +94,7 @@ app.patch('/usuarios/editar', (req, res) => {
     );
 });
 
-app.delete('/usaurios/eliminar', (req, res) => {
+app.delete('/usuarios/eliminar', (req, res) => {
   const filtroUsuario = { _id: new ObjectId(req.body.id) };
   baseDeDatos.collection('usuario').deleteOne(filtroUsuario, (err, result) => {
     if (err) {
