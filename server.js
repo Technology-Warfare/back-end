@@ -7,7 +7,6 @@ import { MongoClient, ObjectId } from 'mongodb';
 import Cors from 'cors';
 
 import jwt from 'express-jwt'
-import jwks from 'jwks-rsa';
 import jwksRsa from 'jwks-rsa';
 
 const stringConexion = 'mongodb+srv://technologywarfare:technologywarfare@cluster0.ngzup.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
@@ -24,7 +23,7 @@ const app = Express();
 app.use(Express.json());
 app.use(Cors());
 
-export const checkJwt = jwt({
+const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
       cache: true,
       rateLimit: true,
@@ -36,15 +35,15 @@ issuer: 'https://technowarfare.us.auth0.com/',
 algorithms: ['RS256']
 });
 
+export default checkJwt;
+
 app.get('/dashboard', function (req, res){
   res.send('Secured resource');
 });
 
-app.use(checkJwt);
-
 
 //crud usuarios
-app.get('/usuarios', checkJwt, (req, res) => {
+app.get('/usuarios', checkJwt, function( res)  {
   console.log('alguien hizo get en la ruta /usuarios');
   baseDeDatos
     .collection('usuario')
