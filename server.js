@@ -43,7 +43,7 @@ app.get('/dashboard', function (req, res){
 
 
 //crud usuarios
-app.get('/usuarios', checkJwt, function( res)  {
+app.get('/usuarios',  checkJwt, (req, res) => {
   console.log('alguien hizo get en la ruta /usuarios');
   baseDeDatos
     .collection('usuario')
