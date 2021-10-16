@@ -6,8 +6,8 @@ import Express from 'express';
 import { MongoClient, ObjectId } from 'mongodb';
 import Cors from 'cors';
 
-import jwt from 'express-jwt'
-import jwksRsa from 'jwks-rsa';
+import jwt from 'express-jwt';
+import jwks from 'jwks-rsa';
 
 const stringConexion = 'mongodb+srv://technologywarfare:technologywarfare@cluster0.ngzup.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
@@ -23,27 +23,25 @@ const app = Express();
 app.use(Express.json());
 app.use(Cors());
 
-const checkJwt = jwt({
-  secret: jwksRsa.expressJwtSecret({
+var jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
       cache: true,
       rateLimit: true,
       jwksRequestsPerMinute: 5,
       jwksUri: 'https://technowarfare.us.auth0.com/.well-known/jwks.json'
 }),
-audience: 'api-autenticaion-technowarfare',
+audience: 'api-autenticacion-technology-warfare',
 issuer: 'https://technowarfare.us.auth0.com/',
 algorithms: ['RS256']
 });
 
-export default checkJwt;
-
-app.get('/dashboard', function (req, res){
+app.get('/dashboard', jwtCheck, (req, res) => {
   res.send('Secured resource');
 });
 
 
 //crud usuarios
-app.get('/usuarios',  checkJwt, (req, res) => {
+app.get('/usuarios',  jwtCheck, (req, res) => {
   console.log('alguien hizo get en la ruta /usuarios');
   baseDeDatos
     .collection('usuario')
@@ -90,7 +88,7 @@ app.post('/usuarios/nuevo', (req, res) => {
   }
 });
 
-app.patch('/usuarios/editar', (req, res) => {
+app.patch('/usuarios/editar', jwtCheck, (req, res) => {
   const edicion = req.body;
   console.log(edicion);
   const filtroUsuario = { _id: new ObjectId(edicion.id) };
@@ -116,7 +114,7 @@ app.patch('/usuarios/editar', (req, res) => {
     );
 });
 
-app.delete('/usuarios/eliminar', (req, res) => {
+app.delete('/usuarios/eliminar', jwtCheck, (req, res) => {
   const filtroUsuario = { _id: new ObjectId(req.body.id) };
   baseDeDatos.collection('usuario').deleteOne(filtroUsuario, (err, result) => {
     if (err) {
@@ -132,7 +130,7 @@ app.delete('/usuarios/eliminar', (req, res) => {
 
 //*******************-----------------******************
 //crud vehiculos
-app.get('/vehiculos', (req, res) => {
+app.get('/vehiculos', jwtCheck, (req, res) => {
   console.log('alguien hizo get en la ruta /vehiculos');
   baseDeDatos
     .collection('vehiculo')
@@ -222,7 +220,7 @@ app.delete('/vehiculos/eliminar', (req, res) => {
 
 //*******************-----------------******************
 //crud ventas
-app.get('/ventas', (req, res) => {
+app.get('/ventas', jwtCheck, (req, res) => {
   console.log('alguien hizo get en la ruta /ventas');
   baseDeDatos
     .collection('venta')
