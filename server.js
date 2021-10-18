@@ -2,9 +2,10 @@
 // const express = require('express');
 
 // hacer el nuevo import
-import Express from 'express';
+import Express, { response } from 'express';
 import { MongoClient, ObjectId } from 'mongodb';
 import Cors from 'cors';
+import jwt_decode from 'jwt-decode';
 
 import jwt from 'express-jwt';
 import jwks from 'jwks-rsa';
@@ -54,6 +55,17 @@ app.get('/usuarios',  jwtCheck, (req, res) => {
         res.json(result);
       }
     });
+});
+
+app.get('/usuarios/self' , jwtCheck, (req, callback) => {
+  console.log('alguien hizo get en la ruta /self');
+  const token = req.headers.authorization.split('Bearer')[1];
+  const user =  jwt_decode(token)['http://localhost/userData'];
+  baseDeDatos
+  .collection('usuario')
+  .findOne({email: user.email}, async (err, respuesta) => {
+    console.log('response consulta base de datos', respuesta);
+  })
 });
 
 app.post('/usuarios/nuevo', (req, res) => {
