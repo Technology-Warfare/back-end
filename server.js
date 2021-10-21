@@ -6,11 +6,14 @@ import Express, { response } from 'express';
 import { MongoClient, ObjectId } from 'mongodb';
 import Cors from 'cors';
 import jwt_decode from 'jwt-decode';
+import dotenv from 'dotenv';
 
 import jwt from 'express-jwt';
 import jwks from 'jwks-rsa';
 
-const stringConexion = 'mongodb+srv://technologywarfare:technologywarfare@cluster0.ngzup.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+dotenv.config({ path: './.env' });
+
+const stringConexion = process.env.DATABASE_URL;
 
 const client = new MongoClient(stringConexion, {
   useNewUrlParser: true,
@@ -331,6 +334,7 @@ app.delete('/ventas/eliminar', (req, res) => {
 });
 
 const main = () => {
+  const port = process.env.PORT;
   client.connect((err, db) => {
     if (err) {
       console.error('Error conectando a la base de datos');
@@ -338,8 +342,8 @@ const main = () => {
     }
     baseDeDatos = db.db('tesla');
     console.log('baseDeDatos exitosa');
-    return app.listen(5000, () => {
-      console.log('escuchando puerto 5000');
+    return app.listen(port, () => {
+      console.log('escuchando puerto ',port);
     });
   });
 };
