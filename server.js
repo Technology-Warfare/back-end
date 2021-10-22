@@ -334,7 +334,7 @@ app.delete('/ventas/eliminar', (req, res) => {
 });
 
 const main = () => {
-  const port = process.env.PORT;
+  const port = process.env.PORT || 5000;
   client.connect((err, db) => {
     if (err) {
       console.error('Error conectando a la base de datos');
