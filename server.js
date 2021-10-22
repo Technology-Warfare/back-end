@@ -343,7 +343,7 @@ const main = () => {
     baseDeDatos = db.db('tesla');
     console.log('baseDeDatos exitosa');
     return app.listen(port, () => {
-      console.log('escuchando puerto ',port);
+      console.log('escuchando puerto ${port}');
     });
   });
 };
